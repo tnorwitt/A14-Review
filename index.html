@@ -425,7 +425,8 @@ function drawQ(){const ord=order();const q=Q[ord[S.i]];const a=ans(q);
   const nav=h('div',{class:'nav'});APP.append(nav);
   const back=h('button',{class:'btn alt',text:'← Back',disabled:S.i===0,onclick:()=>go('quiz',S.i-1)});
   if(a.checked){const x=gradeQ(q);const ok=x.earned===x.max;
-    box.append(h('div',{class:'banner '+(ok?'ok':'no'),text:ok?'Correct! '+x.earned+' / '+x.max:'Not quite: '+x.earned+' / '+x.max+' parts right. See what to fix below.'}),reviewBody(x,a));
+    box.append(h('div',{class:'banner '+(ok?'ok':'no'),text:ok?'Correct! '+x.earned+' / '+x.max:'Not quite: '+x.earned+' / '+x.max+' parts right. See what to fix below.'}));
+    if(ok){if(q.why)box.append(h('div',{class:'why',html:'<b>Remember:</b> '+q.why}));}else box.append(reviewBody(x,a));
     nav.append(back,h('button',{class:'btn',text:S.i===ord.length-1?'Finish →':'Next →',onclick:()=>S.i===ord.length-1?go('submit'):go('quiz',S.i+1)}));
     return;}
   const chk=h('button',{class:'btn amb',text:'Check my answer',onclick:()=>{a.checked=true;save();draw();window.scrollTo(0,0);}});
