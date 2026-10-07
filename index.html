@@ -413,7 +413,7 @@ function drawStart(){
   if(any)b.append(confirmBtn('Start over','btn alt'));
   c.append(b);
   const sc=h('div',{class:'hint',style:'margin-top:14px',text:Q.length+' questions in '+SECS.length+' sections: '+SECS.join(', ')+'.'});c.append(sc);
-  APP.append(h('div',{class:'card',style:'margin-top:24px;background:var(--pale)'},h('b',{text:'Mr. Norwitt\'s 8th grade science'})),c);}
+  APP.append(h('div',{class:'card',style:'margin-top:24px;background:var(--pale)'},h('b',{text:'8th Grade Science Review'})),c);}
 function reviewBody(x,a){const q=x.q,k=h('div',{});
   if(q.type==='fbd'||q.type==='net'||q.type==='bars')k.append(T[q.type].review(q,a));
   else if(q.fig)k.append(typeof q.fig==='function'?q.fig():q.fig);
