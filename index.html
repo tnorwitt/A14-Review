@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A14 Review: Forces, Motion and Energy</title>
+<style>
+:root{--navy:#1A2F44;--amb:#EF9D2D;--pale:#FBF1D6;--green:#1B6B2F;--red:#B3261E;--line:#C9D3DD;--bg:#F5F7FA}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--navy);font-family:Arial,Helvetica,sans-serif;font-size:19px;line-height:1.35}
+button,select,input{font:inherit;color:inherit}
+#app{max-width:1000px;margin:0 auto;padding:0 16px 40px}
+.top{position:sticky;top:0;z-index:5;background:var(--pale);border-bottom:3px solid var(--amb);margin:0 -16px;padding:10px 16px}
+.top .row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.sec{font-weight:bold;font-size:20px}.cnt{font-size:17px}
+.bar{height:10px;background:#fff;border:1px solid var(--line);border-radius:6px;margin-top:8px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--navy)}
+.card{background:#fff;border:2px solid var(--line);border-radius:14px;padding:18px 20px;margin-top:16px}
+h1{font-size:30px;margin:18px 0 6px}h2{font-size:24px;margin:0 0 8px}
+.q{font-size:21px;font-weight:bold;margin:0 0 6px}
+.hint{font-size:16px;color:#4a5b6c;margin:4px 0 12px}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:10px;padding:12px 22px;font-weight:bold;cursor:pointer;font-size:19px}
+.btn.alt{background:#fff;color:var(--navy);border:2px solid var(--navy)}
+.btn.amb{background:var(--amb);color:var(--navy)}
+.btn:disabled{opacity:.4;cursor:default}
+.opt{display:flex;gap:12px;align-items:flex-start;border:2px solid var(--line);border-radius:10px;padding:11px 14px;margin:8px 0;cursor:pointer;background:#fff}
+.opt.on{border-color:var(--navy);background:var(--pale)}
+.opt input{margin-top:4px;width:20px;height:20px;flex:none}
+.chip{display:inline-block;background:var(--amb);color:var(--navy);border:2px solid var(--navy);border-radius:10px;padding:8px 12px;margin:5px;font-weight:bold;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;font-size:18px;line-height:1.2}
+.chip.sel{outline:4px solid #2F6DB5;outline-offset:1px}
+.chip.small{padding:5px 9px;margin:3px}
+.slot{min-height:52px;border:3px dashed #8AA4C0;border-radius:10px;background:#EAF1FA;display:flex;align-items:center;flex-wrap:wrap;padding:2px;flex:1;min-width:130px}
+.slot.over,.zone.over{background:#D5E6FA;border-color:#2F6DB5}
+.mrow{display:flex;gap:14px;align-items:center;margin:8px 0;flex-wrap:wrap}
+.mrow .lab{flex:1 1 280px}
+.tray{margin-top:14px;padding:8px;background:#F0F0F0;border:2px solid #BBB;border-radius:10px;min-height:60px}
+.bins{display:grid;gap:12px;margin-top:6px}
+.bin h3{margin:0 0 6px;font-size:19px;text-align:center}
+.bin .slot{min-height:150px;align-content:flex-start}
+.sel-line{display:flex;gap:10px;align-items:center;margin:9px 0;flex-wrap:wrap}
+.sel-line .lab{flex:1 1 300px}
+select,input[type=text]{border:2px solid var(--navy);border-radius:8px;padding:8px 10px;background:#fff;min-width:150px}
+.ck{display:inline-flex;gap:6px;align-items:center;border:2px solid var(--line);border-radius:8px;padding:6px 10px;margin:3px;cursor:pointer;background:#fff}
+.ck.on{border-color:var(--navy);background:var(--pale)}
+.fbdwrap{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.fbdwrap svg{flex:1 1 520px;max-width:100%;height:auto;background:#fff;border:2px solid var(--line);border-radius:10px;touch-action:none}
+.pal{flex:0 0 200px}
+.pal .chip{display:block;margin:6px 0;text-align:center;color:#fff}
+.pal .chip.used{opacity:.35;cursor:default}
+.zone{fill:rgba(0,0,0,.001);stroke:#8AA4C0;stroke-width:3;stroke-dasharray:8 6}
+.zone.over{fill:rgba(47,109,181,.15);stroke:#2F6DB5}
+.arrowg{cursor:pointer}
+.ghost{position:fixed;z-index:99;pointer-events:none;opacity:.9;transform:translate(-50%,-50%)}
+.bars{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end}
+.bctl{display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:bold}
+.bctl .b{width:44px;height:36px;border-radius:8px;border:2px solid var(--navy);background:#fff;font-size:22px;cursor:pointer;font-weight:bold}
+.tot{font-weight:bold;margin:6px 0}
+.score{font-size:54px;font-weight:bold}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-weight:bold;font-size:16px}
+.pill.ok{background:#CDE8CD;color:var(--green)}.pill.no{background:#F6D5D2;color:var(--red)}
+.part{border-left:6px solid var(--line);padding:6px 10px;margin:6px 0;background:#FAFAFA;font-size:17px}
+.part.ok{border-color:var(--green)}.part.no{border-color:var(--red);background:#FFF6F5}
+.part b{display:block}
+.why{margin-top:8px;padding:8px 12px;background:var(--pale);border-radius:8px;font-size:17px}
+.secrow{display:flex;align-items:center;gap:12px;margin:8px 0;flex-wrap:wrap}
+.secrow .nm{flex:0 0 230px}
+.secrow .bar{flex:1 1 200px;margin:0;height:16px}
+.qgrid{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.qgrid button{width:42px;height:38px;border-radius:8px;border:2px solid var(--line);background:#fff;cursor:pointer;font-weight:bold}
+.qgrid button.done{background:#CDE8CD;border-color:var(--green)}
+.qgrid button.cur{outline:3px solid var(--navy)}
+.revfig{display:flex;gap:12px;flex-wrap:wrap}.revfig>div{flex:1 1 300px}.revfig svg{width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+.cap{font-weight:bold;font-size:15px;margin:4px 0}
+.card svg{max-width:100%;height:auto;display:block;margin:6px auto}.bars svg{width:100%;max-width:420px;margin:0}.fbdwrap svg{margin:0}
+@media (max-width:600px){html,body{font-size:17px}.score{font-size:42px}}
+</style></head><body><div id="app"></div><script>
+'use strict';
+const FC={Gravity:'#C0392B',Normal:'#1F5FA8',Applied:'#1B6B2F',Push:'#1B6B2F',Pull:'#1B6B2F',Friction:'#D9730D',Tension:'#7B3FA0','Air resistance':'#5D6D7E',Spring:'#138D90','Force of motion':'#888888'};
+const ENERGY=['Kinetic','Gravitational PE','Elastic PE','Chemical PE','Thermal'];
+const STORE='a14_review_v1';
+let S={name:'',ans:{},seed:Math.floor(Math.random()*1e9),i:0,phase:'start',first:null,queue:null,retried:false};
+function load(){try{const r=localStorage.getItem(STORE);if(r){const o=JSON.parse(r);if(o&&o.ans)S=Object.assign(S,o);}}catch(e){}}
+function save(){try{localStorage.setItem(STORE,JSON.stringify(S));}catch(e){}}
+function h(tag,attrs){const el=document.createElement(tag);attrs=attrs||{};
+  for(const k in attrs){const v=attrs[k];if(v==null||v===false)continue;
+    if(k==='class')el.className=v;else if(k==='html')el.innerHTML=v;else if(k==='text')el.textContent=v;
+    else if(k.startsWith('on'))el.addEventListener(k.slice(2),v);else el.setAttribute(k,v===true?'':v);}
+  for(let i=2;i<arguments.length;i++){const c=arguments[i];if(c==null)continue;el.append(c.nodeType?c:document.createTextNode(c));}
+  return el;}
+const NS='http://www.w3.org/2000/svg';
+function sv(tag,attrs){const el=document.createElementNS(NS,tag);for(const k in attrs||{})el.setAttribute(k,attrs[k]);for(let i=2;i<arguments.length;i++){const c=arguments[i];if(c)el.append(c.nodeType?c:document.createTextNode(c));}return el;}
+function rng(seed){let a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function shuffled(arr,seed){const a=arr.slice(),r=rng(seed);for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const strip=s=>String(s).replace(/<[^>]*>/g,'');
+const numOf=s=>{if(s==null)return NaN;const m=String(s).replace(/,/g,'').match(/-?\d*\.?\d+/);return m?parseFloat(m[0]):NaN;};
+
+// ---------- drag engine (pointer events; tap = select, then tap a target) ----------
+let SEL=null; // {q,id}
+function makeDrag(el,onDrop,onTap){
+  el.addEventListener('pointerdown',function(e){
+    if(e.button>0)return; const sx=e.clientX,sy=e.clientY; let ghost=null,moved=false,over=null;
+    function target(x,y){if(ghost)ghost.style.display='none';const els=document.elementsFromPoint(x,y);if(ghost)ghost.style.display='';
+      for(const t of els){const d=t.closest&&t.closest('[data-drop]');if(d)return d;}return null;}
+    function mv(ev){const dx=ev.clientX-sx,dy=ev.clientY-sy;
+      if(!moved&&Math.hypot(dx,dy)>7){moved=true;ghost=el.cloneNode(true);ghost.classList.add('ghost');ghost.style.width=el.offsetWidth+'px';document.body.append(ghost);}
+      if(moved){ev.preventDefault();ghost.style.left=ev.clientX+'px';ghost.style.top=ev.clientY+'px';
+        const t=target(ev.clientX,ev.clientY);if(over&&over!==t)over.classList.remove('over');over=t;if(t)t.classList.add('over');}}
+    function up(ev){document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+      if(over)over.classList.remove('over');
+      if(moved){const t=target(ev.clientX,ev.clientY);if(ghost)ghost.remove();if(t)onDrop(t.getAttribute('data-drop'),t);}
+      else onTap();}
+    document.addEventListener('pointermove',mv,{passive:false});document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+  });
+}
+
+// ---------- shared drawing ----------
+function arrowPts(dir,x,y,len,th){const d={U:[0,-1],D:[0,1],L:[-1,0],R:[1,0]}[dir],p=[-d[1],d[0]];
+  const hl=Math.min(30,len*0.45),bt=th/2,hw=th*0.9;
+  const loc=[[0,-bt],[len-hl,-bt],[len-hl,-hw],[len,0],[len-hl,hw],[len-hl,bt],[0,bt]];
+  return loc.map(q=>(x+q[0]*d[0]+q[1]*p[0]).toFixed(1)+','+(y+q[0]*d[1]+q[1]*p[1]).toFixed(1)).join(' ');}
+function blockArrow(g,dir,x,y,len,th,color,cls){return g.appendChild(sv('polygon',{points:arrowPts(dir,x,y,len,th),fill:color,stroke:'#1A2F44','stroke-width':1.5,class:cls||''}));}
+const LENPX={1:70,2:115,3:165};
+function fbdSvg(q,sides,opts){opts=opts||{};
+  const W=720,H=440,cx=360,cy=220,bw=q.obj==='ball'?100:170,bh=q.obj==='ball'?100:100;
+  const svg=sv('svg',{viewBox:`0 0 ${W} ${H}`,role:'img'});
+  if(opts.zones){[['U',230,0,260,cy-bh/2-4],['D',230,cy+bh/2+4,260,H-cy-bh/2-4],['L',0,150,cx-bw/2-4,140],['R',cx+bw/2+4,150,W-cx-bw/2-4,140]].forEach(z=>{
+    const r=sv('rect',{x:z[1],y:z[2],width:z[3],height:z[4],rx:12,class:'zone','data-drop':z[0]});svg.append(r);});}
+  if(q.obj==='ball')svg.append(sv('circle',{cx,cy,r:50,fill:'#F0F0F0',stroke:'#1A2F44','stroke-width':3}));
+  else{svg.append(sv('rect',{x:cx-bw/2,y:cy-bh/2,width:bw,height:bh,fill:'#F0F0F0',stroke:'#1A2F44','stroke-width':3,rx:4,'pointer-events':'none'}));
+    svg.append(sv('text',{x:cx,y:cy+8,'text-anchor':'middle','font-size':22,'font-weight':'bold',fill:'#1A2F44','pointer-events':'none'},q.objLabel||''));}
+  const anchor={U:[cx,cy-bh/2],D:[cx,cy+bh/2],L:[cx-bw/2,cy],R:[cx+bw/2,cy]};
+  for(const s of ['U','D','L','R']){const a=sides[s];if(!a)continue;const len=LENPX[a.len||2],[x,y]=anchor[s],col=FC[a.f]||'#555';
+    const g=sv('g',{class:'arrowg','data-side':s});svg.append(g);
+    blockArrow(g,s,x,y,len,26,col);
+    const lab=sv('text',{'font-size':19,'font-weight':'bold',fill:col,stroke:'#fff','stroke-width':4,'paint-order':'stroke'},a.f);
+    if(s==='U'||s==='D'){lab.setAttribute('x',x+26);lab.setAttribute('y',y+(s==='U'?-len/2:len/2)+6);}
+    else{lab.setAttribute('x',x+(s==='L'?-len/2:len/2));lab.setAttribute('y',y-26);lab.setAttribute('text-anchor','middle');}
+    g.append(lab);
+    if(opts.edit){const tip={U:[x,y-len],D:[x,y+len],L:[x-len,y],R:[x+len,y]}[s];
+      const hit=sv('rect',{x:Math.min(x,tip[0])-14,y:Math.min(y,tip[1])-14,width:Math.abs(tip[0]-x)+28,height:Math.abs(tip[1]-y)+28,fill:'rgba(0,0,0,.001)','data-len':s});g.append(hit);
+      const bx={U:[x+60,y-len],D:[x+60,y+len],L:[x-len,y+34],R:[x+len,y+34]}[s];
+      const xg=sv('g',{'data-del':s,style:'cursor:pointer'});xg.append(sv('circle',{cx:bx[0],cy:bx[1],r:14,fill:'#fff',stroke:'#B3261E','stroke-width':2.5}));
+      xg.append(sv('text',{x:bx[0],y:bx[1]+6,'text-anchor':'middle','font-size':18,'font-weight':'bold',fill:'#B3261E'},'×'));g.append(xg);}}
+  return svg;}
+
+// ---------- question type handlers ----------
+const T={};
+// MC
+T.mc={
+ render(q,box,a,api){const ord=shuffled(q.options.map((_,i)=>i),S.seed+q.n*7);
+  ord.forEach(i=>{const on=a.v===i;const lab=h('label',{class:'opt'+(on?' on':'')},h('input',{type:'radio',name:'o'+q.id,checked:on}),h('span',{html:q.options[i]}));
+    lab.querySelector('input').addEventListener('change',()=>{a.v=i;api.save();api.redo();});box.append(lab);});},
+ answered:(q,a)=>a.v!=null,
+ grade(q,a){const ok=a.v===q.answer;return[{ok,label:'Your choice',got:a.v==null?'(no answer)':strip(q.options[a.v]),exp:strip(q.options[q.answer])}];},
+ solve:q=>({v:q.answer})};
+// MULTI (select / check / num prompts)
+T.multi={
+ render(q,box,a,api){a.p=a.p||{};if(q.fig)box.append(typeof q.fig==='function'?q.fig():q.fig);
+  q.prompts.forEach((p,i)=>{const row=h('div',{class:'sel-line'});row.append(h('div',{class:'lab',html:p.text}));
+   if(p.type==='select'){const s=h('select');s.append(h('option',{value:'',text:'Choose…'}));p.options.forEach((o,j)=>s.append(h('option',{value:j,text:o,selected:a.p[i]===j})));
+     s.addEventListener('change',()=>{a.p[i]=s.value===''?undefined:+s.value;api.save();api.redo(true);});row.append(s);}
+   else if(p.type==='num'){const inp=h('input',{type:'text',inputmode:'decimal',autocomplete:'off',value:a.p[i]!=null?a.p[i]:'',placeholder:'type a number'});
+     inp.addEventListener('input',()=>{a.p[i]=inp.value;api.save();api.redo(true);});row.append(inp);}
+   else if(p.type==='check'){const wrap=h('div');(a.p[i]=a.p[i]||[]);p.options.forEach((o,j)=>{const on=a.p[i].includes(j);
+     const l=h('label',{class:'ck'+(on?' on':'')},h('input',{type:'checkbox',checked:on}),o);
+     l.querySelector('input').addEventListener('change',e=>{const s=new Set(a.p[i]);e.target.checked?s.add(j):s.delete(j);a.p[i]=[...s].sort();api.save();api.redo();});wrap.append(l);});row.append(wrap);}
+   box.append(row);});},
+ answered:(q,a)=>!!a.p&&q.prompts.some((p,i)=>a.p[i]!=null&&a.p[i]!==''&&!(Array.isArray(a.p[i])&&!a.p[i].length)),
+ grade(q,a){a.p=a.p||{};return q.prompts.map((p,i)=>{const v=a.p[i];let ok,got,exp;
+   if(p.type==='select'){ok=v===p.answer;got=v==null?'(no answer)':p.options[v];exp=p.options[p.answer];}
+   else if(p.type==='num'){const n=numOf(v);ok=Math.abs(n-p.answer)<1e-6;got=(v==null||v==='')?'(no answer)':String(v);exp=String(p.answer)+(p.unit?' '+p.unit:'');}
+   else{const g=(v||[]).slice().sort().join(),e=p.answer.slice().sort().join();ok=g===e;got=(v&&v.length)?v.map(j=>p.options[j]).join(', '):'(none chosen)';exp=p.answer.map(j=>p.options[j]).join(', ');}
+   return{ok,label:strip(p.text),got,exp};});},
+ solve:q=>({p:Object.fromEntries(q.prompts.map((p,i)=>[i,p.type==='check'?p.answer.slice():p.answer]))})};
+// PLACE (match / sort / rank)
+T.place={
+ render(q,box,a,api){a.pl=a.pl||{};const pl=a.pl;
+  const items=q.items,targets=q.targets;
+  const occ=t=>items.filter(it=>pl[it.id]===t);
+  const mkChip=it=>{const c=h('button',{class:'chip'+(SEL&&SEL.q===q.id&&SEL.id===it.id?' sel':''),type:'button','data-chip':it.id},it.text);
+    makeDrag(c,tid=>place(it.id,tid),()=>{SEL=(SEL&&SEL.q===q.id&&SEL.id===it.id)?null:{q:q.id,id:it.id};api.redo(false);});return c;};
+  function place(id,tid){if(tid==='tray'){delete pl[id];}else{const t=targets.find(x=>x.id===tid);if(!t)return;
+     if(t.cap===1)items.forEach(o=>{if(pl[o.id]===tid&&o.id!==id)delete pl[o.id];});pl[id]=tid;}
+    SEL=null;api.save();api.redo(false);}
+  const slotFor=t=>{const s=h('div',{class:'slot','data-drop':t.id});occ(t.id).forEach(it=>s.append(mkChip(it)));
+    s.addEventListener('click',e=>{if(e.target.closest('.chip'))return;if(SEL&&SEL.q===q.id)place(SEL.id,t.id);});return s;};
+  if(q.mode==='sort'){const g=h('div',{class:'bins'});g.style.gridTemplateColumns=`repeat(${targets.length},minmax(0,1fr))`;
+    if(targets.length>2&&window.innerWidth<700)g.style.gridTemplateColumns='1fr';
+    targets.forEach(t=>{const b=h('div',{class:'bin'},h('h3',{text:t.label}),slotFor(t));g.append(b);});box.append(g);}
+  else{targets.forEach(t=>{box.append(h('div',{class:'mrow'},h('div',{class:'lab',html:t.label}),slotFor(t)));});}
+  const tray=h('div',{class:'tray','data-drop':'tray'});
+  shuffled(items.filter(it=>pl[it.id]==null),S.seed+q.n*13).forEach(it=>tray.append(mkChip(it)));
+  if(!tray.children.length)tray.append(h('span',{class:'hint',text:'All pieces placed. Tap a piece to pick it up and move it.'}));
+  tray.addEventListener('click',e=>{if(e.target.closest('.chip'))return;if(SEL&&SEL.q===q.id&&pl[SEL.id]!=null)place(SEL.id,'tray');});
+  box.append(tray);},
+ answered:(q,a)=>!!a.pl&&Object.keys(a.pl).length>0,
+ grade(q,a){const pl=a.pl||{},tn=id=>q.targets.find(t=>t.id===id);
+  if(q.mode==='sort')return q.items.map(it=>{const t=pl[it.id];return{ok:t===it.bin,label:it.text,got:t?tn(t).label:'(not placed)',exp:tn(it.bin).label};});
+  return q.targets.map(t=>{const it=q.items.find(o=>pl[o.id]===t.id);return{ok:!!it&&it.key===t.expect,label:strip(t.label),got:it?it.text:'(empty)',exp:t.expect};});},
+ solve(q){const pl={};if(q.mode==='sort')q.items.forEach(it=>pl[it.id]=it.bin);
+  else{const used=new Set();q.targets.forEach(t=>{const it=q.items.find(o=>o.key===t.expect&&!used.has(o.id));if(it){used.add(it.id);pl[it.id]=t.id;}});}return{pl};}};
+// FBD
+T.fbd={
+ render(q,box,a,api){a.sides=a.sides||{};const sides=a.sides;const wrap=h('div',{class:'fbdwrap'});
+  const svg=fbdSvg(q,sides,{zones:true,edit:true});
+  const used=f=>Object.values(sides).some(x=>x.f===f);
+  function put(f,side){for(const s in sides)if(sides[s].f===f)delete sides[s];sides[side]={f,len:2};SEL=null;api.save();api.redo(false);}
+  svg.querySelectorAll('[data-drop]').forEach(z=>z.addEventListener('click',()=>{if(SEL&&SEL.q===q.id)put(SEL.id,z.getAttribute('data-drop'));}));
+  svg.querySelectorAll('[data-len]').forEach(r=>r.addEventListener('click',()=>{const s=r.getAttribute('data-len');sides[s].len=sides[s].len>=3?1:sides[s].len+1;api.save();api.redo(false);}));
+  svg.querySelectorAll('[data-del]').forEach(r=>r.addEventListener('click',e=>{e.stopPropagation();delete sides[r.getAttribute('data-del')];api.save();api.redo(false);}));
+  const pal=h('div',{class:'pal'},h('div',{class:'hint',text:'Forces. Drag one to a side of the object, or tap it and then tap a side.'}));
+  q.palette.forEach(f=>{const u=used(f);const c=h('button',{class:'chip'+(u?' used':'')+(SEL&&SEL.q===q.id&&SEL.id===f?' sel':''),type:'button',style:'background:'+(FC[f]||'#555')},f);
+    if(!u)makeDrag(c,side=>{if('UDLR'.includes(side))put(f,side);},()=>{SEL=(SEL&&SEL.id===f)?null:{q:q.id,id:f};api.redo(false);});
+    pal.append(c);});
+  pal.append(h('div',{class:'hint',text:'Tap an arrow to change its length: short, medium, long. Tap × to remove it.'}));
+  wrap.append(svg,pal);box.append(wrap);},
+ answered:(q,a)=>!!a.sides&&Object.keys(a.sides).length>0,
+ grade(q,a){const sides=a.sides||{},nm={U:'Up',D:'Down',L:'Left',R:'Right'},parts=[];
+  for(const s in q.exp){const got=sides[s];parts.push({ok:!!got&&got.f===q.exp[s],label:`${q.exp[s]} arrow (${nm[s]})`,got:got?got.f:'(nothing on this side)',exp:q.exp[s]});}
+  const extra=Object.keys(sides).filter(s=>!(s in q.exp)||sides[s].f!==q.exp[s]);
+  parts.push({ok:extra.length===0&&Object.keys(sides).length>0,label:'No extra or wrong arrows',got:extra.length?extra.map(s=>sides[s].f+' ('+nm[s]+')').join(', '):(Object.keys(sides).length?'none':'(nothing drawn)'),exp:'only the forces shown in the answer'});
+  const L=f=>{const s=Object.keys(sides).find(k=>sides[k].f===f);return s?sides[s].len:null;};
+  (q.rel||[]).forEach(r=>{const a1=L(r[1]),b1=L(r[2]);let ok=false;if(a1!=null&&b1!=null)ok=r[0]==='eq'?a1===b1:a1>b1;
+    const lw=x=>x==null?'missing':['','short','medium','long'][x];
+    parts.push({ok,label:r[0]==='eq'?`${r[1]} and ${r[2]} are the same length`:`${r[1]} is longer than ${r[2]}`,got:`${r[1]}: ${lw(a1)}, ${r[2]}: ${lw(b1)}`,exp:r[0]==='eq'?'equal lengths':`${r[1]} longer`});});
+  return parts;},
+ solve(q){const sides={};for(const s in q.exp)sides[s]={f:q.exp[s],len:q.lens[q.exp[s]]||2};return{sides};},
+ review(q,a){const w=h('div',{class:'revfig'});const exp={};for(const s in q.exp)exp[s]={f:q.exp[s],len:q.lens[q.exp[s]]||2};
+  w.append(h('div',{},h('div',{class:'cap',text:'Your diagram'}),fbdSvg(q,a.sides||{},{})),h('div',{},h('div',{class:'cap',text:'Correct diagram'}),fbdSvg(q,exp,{})));return w;}};
+// NET FORCE picture
+function netSvg(p){const svg=sv('svg',{viewBox:'0 0 720 270',role:'img'});const bx=290,by=70,bw=140,bh=80,K=22;
+  svg.append(sv('rect',{x:bx,y:by,width:bw,height:bh,fill:'#F0F0F0',stroke:'#1A2F44','stroke-width':3}));
+  svg.append(sv('text',{x:bx+bw/2,y:by+bh/2+8,'text-anchor':'middle','font-size':22,'font-weight':'bold',fill:'#1A2F44'},'Box'));
+  p.forces.forEach(f=>{const len=Math.max(95,f.N*K),col=FC[f.lab]||'#555';let tx,ty,lx,ly,anchor='middle';
+    if(f.under){tx=bx+(bw-len)/2+(f.dir==='L'?len:0);ty=by+bh+34;lx=bx+bw/2;ly=ty+44;}
+    else if(f.side==='left'){tx=f.dir==='R'?bx-len:bx;ty=by+bh/2;lx=bx-len/2;ly=ty-30;}
+    else{tx=f.dir==='L'?bx+bw+len:bx+bw;ty=by+bh/2;lx=bx+bw+len/2;ly=ty-30;}
+    const g=sv('g');svg.append(g);blockArrow(g,f.dir,tx,ty,len,34,col);
+    g.append(sv('text',{x:tx+(f.dir==='R'?len/2-8:-len/2+8),y:ty+7,'text-anchor':'middle','font-size':20,'font-weight':'bold',fill:'#fff'},f.N+' N'));
+    g.append(sv('text',{x:lx,y:ly,'text-anchor':'middle','font-size':19,'font-weight':'bold',fill:col},f.lab));});
+  return svg;}
+T.net={
+ render(q,box,a,api){a.p=a.p||{};box.append(netSvg(q));
+  const rows=[['Is the net force balanced or unbalanced?','sel',['Balanced (net force is 0)','Unbalanced'],'b'],['Size of the net force (just the number, in N):','num',null,'n'],['Direction of the net force:','sel',['Right','Left','No direction (it is 0)'],'d']];
+  rows.forEach(r=>{const row=h('div',{class:'sel-line'},h('div',{class:'lab',text:r[0]}));
+    if(r[1]==='sel'){const s=h('select');s.append(h('option',{value:'',text:'Choose…'}));r[2].forEach((o,j)=>s.append(h('option',{value:j,text:o,selected:a.p[r[3]]===j})));
+      s.addEventListener('change',()=>{a.p[r[3]]=s.value===''?undefined:+s.value;api.save();api.redo(true);});row.append(s);}
+    else{const inp=h('input',{type:'text',inputmode:'decimal',autocomplete:'off',value:a.p.n!=null?a.p.n:'',placeholder:'number'});inp.addEventListener('input',()=>{a.p.n=inp.value;api.save();api.redo(true);});row.append(inp);}
+    box.append(row);});},
+ answered:(q,a)=>!!a.p&&Object.keys(a.p).some(k=>a.p[k]!=null&&a.p[k]!==''),
+ grade(q,a){const p=a.p||{},ex=q.exp;const dn=['Right','Left','No direction (it is 0)'],bn=['Balanced (net force is 0)','Unbalanced'];
+  return[{ok:p.b===(ex.n===0?0:1),label:'Balanced or unbalanced?',got:p.b==null?'(no answer)':bn[p.b],exp:bn[ex.n===0?0:1]},
+   {ok:Math.abs(numOf(p.n)-ex.n)<1e-6,label:'Size of the net force',got:(p.n==null||p.n==='')?'(no answer)':String(p.n),exp:ex.n+' N'},
+   {ok:p.d===ex.d,label:'Direction of the net force',got:p.d==null?'(no answer)':dn[p.d],exp:dn[ex.d]}];},
+ solve:q=>({p:{b:q.exp.n===0?0:1,n:String(q.exp.n),d:q.exp.d}}),
+ review(q){const w=h('div',{});w.append(netSvg(q));return w;}};
+// BARS (build an energy bar chart)
+function barsSvg(v){const svg=sv('svg',{viewBox:'0 0 420 250',role:'img'});const cols=['#2F6DB5','#2E8B57','#C0392B'],nm=['PE','KE','Thermal'];
+  svg.append(sv('rect',{x:5,y:5,width:410,height:240,fill:'#fff',stroke:'#C9D3DD'}));
+  [0,5,10].forEach(t=>{const y=205-t*17;svg.append(sv('line',{x1:40,x2:410,y1:y,y2:y,stroke:'#E1E7ED'}));svg.append(sv('text',{x:34,y:y+5,'text-anchor':'end','font-size':14,fill:'#4a5b6c'},t));});
+  v.forEach((n,i)=>{const x=70+i*115,hh=n*17;if(hh>0)svg.append(sv('rect',{x,y:205-hh,width:80,height:hh,fill:cols[i],stroke:'#1A2F44','stroke-width':1.5}));
+    svg.append(sv('text',{x:x+40,y:228,'text-anchor':'middle','font-size':16,'font-weight':'bold',fill:'#1A2F44'},nm[i]));});
+  svg.append(sv('line',{x1:40,x2:410,y1:205,y2:205,stroke:'#1A2F44','stroke-width':2}));return svg;}
+T.bars={
+ render(q,box,a,api){a.v=a.v||[0,0,0];box.append(h('div',{class:'hint',text:q.note||'The skater starts at the top of the ramp with 10 units of energy, all gravitational PE.'}));
+  const w=h('div',{class:'bars'});w.append(barsSvg(a.v));
+  const ctl=h('div',{});['Gravitational PE','Kinetic','Thermal'].forEach((n,i)=>{const row=h('div',{class:'sel-line'});row.append(h('div',{style:'width:150px;font-weight:bold',text:n}));
+    const m=h('button',{class:'btn alt',type:'button',text:'−',style:'padding:6px 16px'}),pl=h('button',{class:'btn alt',type:'button',text:'+',style:'padding:6px 16px'});
+    m.onclick=()=>{a.v[i]=Math.max(0,a.v[i]-1);api.save();api.redo(false);};pl.onclick=()=>{a.v[i]=Math.min(10,a.v[i]+1);api.save();api.redo(false);};
+    row.append(m,h('b',{text:String(a.v[i]),style:'width:30px;text-align:center'}),pl);ctl.append(row);});
+  const tot=a.v[0]+a.v[1]+a.v[2];ctl.append(h('div',{class:'tot',text:'Total energy: '+tot}));w.append(ctl);box.append(w);},
+ answered:(q,a)=>!!a.v&&a.v.some(x=>x>0),
+ grade(q,a){const v=a.v||[0,0,0];const tot=v[0]+v[1]+v[2];return q.rules.map(r=>({ok:tot>0&&r.f(v,tot),label:r.label,got:`PE ${v[0]}, KE ${v[1]}, Thermal ${v[2]} (total ${tot})`,exp:r.exp}));},
+ solve:q=>({v:q.sol.slice()}),
+ review(q,a){const w=h('div',{class:'revfig'});w.append(h('div',{},h('div',{class:'cap',text:'Your chart'}),barsSvg(a.v||[0,0,0])),h('div',{},h('div',{class:'cap',text:'One correct chart'}),barsSvg(q.sol)));return w;}};
+const SECS=['Force Cards','Net Force','Free Body Diagrams',"Newton's Laws",'Calculations','Energy Types','Energy Transfer','Boss Round'];
+const Q=[];
+function add(sec,type,o){o.sec=sec;o.type=type;o.n=Q.length;o.id='q'+o.n;Q.push(o);return o;}
+const mc=(sec,prompt,options,answer,why)=>add(sec,'mc',{prompt,options,answer,why});
+const multi=(sec,prompt,prompts,why,fig)=>add(sec,'multi',{prompt,prompts,why,fig});
+// ===== 1 Force Cards =====
+const S1=SECS[0];
+mc(S1,'A book sits on a table. Which force pushes UP on the book?',['Gravity','Normal','Tension','Applied'],1,'The table pushes back to support the book. That support force is called the normal force.');
+const forceRows=[['Applied','A push or pull on an object'],['Normal','The surface pushing back to support'],['Friction','Resists sliding between surfaces'],['Gravity','Earth pulling objects downward'],['Air resistance','Friction from air on a moving object'],['Tension','The pull through a tight rope'],['Spring','Push or pull from a stretched spring'],['Compression','A squeeze, like a truck on a road']];
+function placeMatch(sec,prompt,rows,why,keyIsRight){
+  const targets=rows.map((r,i)=>({id:'t'+i,label:keyIsRight?r[1]:r[0],expect:keyIsRight?r[0]:r[1],cap:1}));
+  const items=rows.map((r,i)=>({id:'i'+i,text:keyIsRight?r[0]:r[1],key:keyIsRight?r[0]:r[1]}));
+  return add(sec,'place',{mode:'match',prompt,targets,items,why});}
+placeMatch(S1,'Match each force to its description. Drag the force name onto the description (or tap a name, then tap the box).',forceRows,'Review the 8 force cards: applied, normal, friction, gravity, air resistance, tension, spring, compression.',true);
+const scen=[['A kid pushes a shopping cart.','Applied'],['A table holds up a book.','Normal'],['Sneakers slow a sliding skater.','Friction'],['Earth pulls an apple off a tree.','Gravity'],["Air slows a skydiver's fall.",'Air resistance'],['A rope pulls a sled forward.','Tension'],['A stretched rubber band snaps back.','Spring'],['A heavy truck presses on a road.','Compression']];
+placeMatch(S1,'Which force is in each scene? Drag a force name onto each scene.',scen.map(r=>[r[1],r[0]]),'Match what is happening to the force card: push/pull = applied, support = normal, sliding = friction, falling = gravity, air = air resistance, rope = tension, stretch = spring, squeeze = compression.',true);
+mc(S1,'Which of these is NOT a force?',['Friction','Tension','Force of motion','Gravity'],2,'"Force of motion" is not one of the force cards. Motion is not a force. Objects keep moving without a force pushing them along (Newton\'s 1st law).');
+mc(S1,'A skydiver falls. Which force pushes against the fall and acts opposite to the motion?',['Air resistance','Normal','Tension','Spring'],0,'Air resistance is friction from the air, and it acts opposite to the motion.');
+// ===== 2 Net Force =====
+const S2=SECS[1];
+const NP=[
+ {forces:[{lab:'Push',dir:'R',N:10,side:'left'},{lab:'Push',dir:'L',N:4,side:'right'}],exp:{n:6,d:0},why:'10 to the right minus 4 to the left = 6 N to the right. Unbalanced, so the box speeds up to the right.'},
+ {forces:[{lab:'Push',dir:'R',N:8,side:'left'},{lab:'Pull',dir:'R',N:5,side:'right'},{lab:'Friction',dir:'L',N:3,under:true}],exp:{n:10,d:0},why:'8 + 5 = 13 to the right, minus 3 friction to the left = 10 N to the right.'},
+ {forces:[{lab:'Push',dir:'R',N:6,side:'left'},{lab:'Push',dir:'L',N:2,side:'right'},{lab:'Friction',dir:'L',N:4,under:true}],exp:{n:0,d:2},why:'6 to the right. 2 + 4 = 6 to the left. Equal and opposite, so the net force is 0 N and the forces are balanced.'},
+ {forces:[{lab:'Push',dir:'R',N:3,side:'left'},{lab:'Push',dir:'L',N:9,side:'right'},{lab:'Friction',dir:'R',N:2,under:true}],exp:{n:4,d:1},why:'3 + 2 = 5 to the right. 9 to the left. 9 − 5 = 4 N to the left.'}];
+NP.forEach((p,i)=>add(S2,'net',Object.assign({prompt:'Net force, problem '+(i+1)+'. Add forces in the same direction and subtract forces in opposite directions. (Up and down forces cancel.)'},p)));
+const bu=[{t:'A book sits on a table.',b:0},{t:'A puck glides at a steady speed.',b:0},{t:'Tug-of-war: nobody moves.',b:0},{t:'A car cruises at a steady 40 mph.',b:0},{t:'A car speeds up at a green light.',b:1},{t:'A ball at the top of its toss.',b:1},{t:'A crate pushed harder than friction.',b:1},{t:'A soccer ball hits the pins.',b:1}];
+add(S2,'place',{mode:'sort',prompt:'Sort each scene: is the net force 0 (balanced) or not (unbalanced)?',targets:[{id:'b',label:'Balanced (net force = 0)'},{id:'u',label:'Unbalanced (net force not 0)'}],items:bu.map((x,i)=>({id:'i'+i,text:x.t,bin:x.b?'u':'b'})),why:'Balanced: no change in motion (rest or steady speed in a straight line). Unbalanced: the speed or direction changes. A ball at the top of its toss still has gravity pulling it down, and a car speeding up has an unbalanced net force.'});
+mc(S2,'A car drives in a straight line at a steady 40 mph. What is the net force on the car?',['0 N (balanced)','More than 0 N, forward','More than 0 N, backward','You can not tell'],0,'Steady speed in a straight line means no change in motion, so the net force is 0 N.');
+mc(S2,'An unbalanced force acts on an object. What happens?',['Its speed or direction changes','It keeps the same steady speed','Its mass gets bigger','It always stops'],0,'An unbalanced net force changes the motion: speeding up, slowing down, or turning.');
+// ===== 3 FBDs =====
+const S3=SECS[2];
+mc(S3,'What does a free body diagram (FBD) show?',['All the forces acting on one object','Every object in the room','Only the biggest force','The path the object takes'],0,'An FBD shows every force on ONE object, drawn as arrows starting at the object.');
+const FB=[
+ {t:'A crate is pushed across the floor and speeds up.',obj:'box',objLabel:'Crate',palette:['Gravity','Normal','Applied','Friction','Tension','Air resistance'],exp:{D:'Gravity',U:'Normal',R:'Applied',L:'Friction'},lens:{Gravity:2,Normal:2,Applied:3,Friction:1},rel:[['eq','Gravity','Normal'],['gt','Applied','Friction']],why:'Gravity = Normal (up and down balance). Applied is longer than Friction, so the net force points right and the crate speeds up. There is no rope, so no tension.'},
+ {t:'A sled is pulled by a rope at a steady speed.',obj:'box',objLabel:'Sled',palette:['Gravity','Normal','Tension','Friction','Applied','Spring'],exp:{D:'Gravity',U:'Normal',R:'Tension',L:'Friction'},lens:{Gravity:2,Normal:2,Tension:2,Friction:2},rel:[['eq','Gravity','Normal'],['eq','Tension','Friction']],why:'Steady speed means the net force is 0 N, so Tension and Friction are equal and opposite, and Gravity equals Normal.'},
+ {t:'A ball is at the very top of its toss. (Ignore air.)',obj:'ball',objLabel:'',palette:['Gravity','Normal','Applied','Friction','Spring'],exp:{D:'Gravity'},lens:{Gravity:2},rel:[],why:'Nothing is touching the ball, so only gravity acts on it. One force can not be balanced, even while the ball is still for a moment.'},
+ {t:'A mass hangs from a spring and is not moving.',obj:'box',objLabel:'Mass',palette:['Gravity','Spring','Normal','Applied','Friction'],exp:{D:'Gravity',U:'Spring'},lens:{Gravity:2,Spring:2},rel:[['eq','Gravity','Spring']],why:'The spring pulls up as hard as gravity pulls down, so the forces are balanced. Nothing is touching the bottom, so there is no normal force.'}];
+FB.forEach(f=>add(S3,'fbd',Object.assign({prompt:'Build the FBD: '+f.t+' Place an arrow on each side where there is a force and set its length.'},f)));
+const detQ={obj:'box',objLabel:'Book'};
+multi(S3,'A student drew this FBD for a book resting on a table. Which are mistakes? (Choose all that apply.)',[{type:'check',text:'Mistakes in the diagram:',options:['The Normal arrow should be the same length as Gravity, because the book is not moving','"Force of motion" is not a force, so it should not be drawn','The Gravity arrow should point up','The book should not be drawn as a box'],answer:[0,1]}],'The book is not moving, so Normal must equal Gravity. And "force of motion" is not a force; nothing is pushing the book, so there is no applied arrow either.',()=>fbdSvg(detQ,{D:{f:'Gravity',len:3},U:{f:'Normal',len:1},R:{f:'Force of motion',len:3}},{}));
+mc(S3,'In an FBD, a longer arrow means…',['a stronger force','a faster object','a heavier object','a force that happened earlier'],0,'Arrow length shows the size of the force. Equal arrows in opposite directions are balanced.');
+// ===== 4 Newton's Laws =====
+const S4=SECS[3];
+const nl=[{t:'Passenger lurches as the car brakes.',b:0},{t:'Skateboard hits a rock; rider keeps going.',b:0},{t:'A puck keeps gliding on frictionless ice.',b:0},{t:'Same push: heavier cart speeds up less.',b:1},{t:'A bigger push makes a bigger acceleration.',b:1},{t:'A truck needs bigger brakes than a bicycle.',b:1},{t:'Gas pushes down; the rocket goes up.',b:2},{t:'You push on a wall; it pushes back.',b:2},{t:'A foot pushes the ground back to walk.',b:2}];
+add(S4,'place',{mode:'sort',prompt:"Which of Newton's laws explains each scene? Sort the cards.",targets:[{id:'0',label:'1st law: inertia'},{id:'1',label:'2nd law: F = m × a'},{id:'2',label:'3rd law: action-reaction'}],items:nl.map((x,i)=>({id:'i'+i,text:x.t,bin:String(x.b)})),why:"1st law: objects keep doing what they were doing (inertia). 2nd law: more force means more acceleration; more mass means less (F = m × a). 3rd law: forces come in pairs."});
+mc(S4,"Newton's 1st law says an object at rest, or moving at a steady speed in a straight line, stays that way unless…",['an unbalanced force acts on it','it gets heavier','it gets warmer','time passes'],0,'This tendency to keep doing what it is doing is inertia.');
+const pairs=[['Foot pushes the ground backward.','Ground pushes foot forward.'],['Hammer pushes on a nail.','Nail pushes back on hammer.'],['Rocket pushes gas downward.','Gas pushes rocket upward.'],['Your hand pushes on a wall.','Wall pushes back on hand.'],['Bumper car A pushes car B.','Car B pushes back on car A.']];
+add(S4,'place',{mode:'match',prompt:"Newton's 3rd law: match each action force with its reaction force.",targets:pairs.map((p,i)=>({id:'t'+i,label:p[0],expect:p[1],cap:1})),items:pairs.map((p,i)=>({id:'i'+i,text:p[1],key:p[1]})),why:'Action and reaction are equal in size, opposite in direction, and act on different objects.'});
+mc(S4,'Why can action and reaction forces NOT cancel each other out?',['They act on two different objects','They are different sizes','They happen at different times','They point in the same direction'],0,'Forces only cancel when they act on the same object. An action-reaction pair acts on two different objects.');
+add(S4,'place',{mode:'match',prompt:'Rank from fastest to slowest acceleration. The same 20 N push is used on each cart.',targets:['Fastest','Middle','Slowest'].map((l,i)=>({id:'t'+i,label:l,expect:['2 kg cart','5 kg cart','10 kg cart'][i],cap:1})),items:['2 kg cart','10 kg cart','5 kg cart'].map((x,i)=>({id:'i'+i,text:x,key:x})),why:'a = F ÷ m. Same force, so less mass means more acceleration: 20 ÷ 2 = 10, 20 ÷ 5 = 4, 20 ÷ 10 = 2 m/s².'});
+add(S4,'place',{mode:'match',prompt:'Rank from fastest to slowest acceleration. The same 5 kg cart gets different pushes.',targets:['Fastest','Middle','Slowest'].map((l,i)=>({id:'t'+i,label:l,expect:['20 N push','10 N push','5 N push'][i],cap:1})),items:['5 N push','20 N push','10 N push'].map((x,i)=>({id:'i'+i,text:x,key:x})),why:'a = F ÷ m. Same mass, so more force means more acceleration: 20 ÷ 5 = 4, 10 ÷ 5 = 2, 5 ÷ 5 = 1 m/s².'});
+mc(S4,'The same net force pushes two carts. One cart has twice the mass of the other. The heavier cart’s acceleration is…',['half as much','twice as much','the same','zero'],0,'a = F ÷ m. Double the mass with the same force gives half the acceleration.');
+// ===== 5 Calculations =====
+const S5=SECS[4];
+const FORM=['speed = distance ÷ time','average = sum ÷ number of trials','F = m × a','a = F ÷ m','m = F ÷ a','acceleration = change in speed ÷ time','GPE = weight × height'];
+const UN=['m/s','m/s²','N','kg','N·m','s','m'];
+const CP=[
+ {q:'A cyclist rides 12 m in 4 s. What is her speed?',f:0,n:3,u:0,why:'speed = distance ÷ time = 12 ÷ 4 = 3 m/s.'},
+ {q:'Five roll times: 12, 14, 13, 11, 15 s. What is the average time?',f:1,n:13,u:5,why:'Sum = 12 + 14 + 13 + 11 + 15 = 65. 65 ÷ 5 = 13 s.'},
+ {q:'A 4 kg toy accelerates at 5 m/s². What net force acts on it?',f:2,n:20,u:2,why:'F = m × a = 4 × 5 = 20 N.'},
+ {q:'A net force of 24 N pushes an 8 kg cart. What is its acceleration?',f:3,n:3,u:1,why:'a = F ÷ m = 24 ÷ 8 = 3 m/s².'},
+ {q:'A net force of 60 N gives a crate an acceleration of 5 m/s². What is its mass?',f:4,n:12,u:3,why:'m = F ÷ a = 60 ÷ 5 = 12 kg.'},
+ {q:'A skater speeds up from 2 m/s to 14 m/s in 3 s. What is her acceleration?',f:5,n:4,u:1,why:'Change in speed = 14 − 2 = 12 m/s. 12 ÷ 3 = 4 m/s².'},
+ {q:'A 60 N box is lifted 3 m. What is its gravitational PE?',f:6,n:180,u:4,why:'GPE = weight × height = 60 × 3 = 180 N·m.'},
+ {q:'A 6 kg sled gets a 30 N push to the right and a 6 N friction force to the left. What is its acceleration?',f:3,pre:24,n:4,u:1,why:'Net force = 30 − 6 = 24 N. a = F ÷ m = 24 ÷ 6 = 4 m/s².'}];
+CP.forEach((p,i)=>{const pr=[{type:'select',text:'Which formula do you use?',options:FORM,answer:p.f}];
+  if(p.pre!=null)pr.push({type:'num',text:'First find the net force (in N):',answer:p.pre,unit:'N'});
+  pr.push({type:'num',text:'Answer (number only):',answer:p.n},{type:'select',text:'Unit of your answer:',options:UN,answer:p.u});
+  multi(S5,(i+1)+'. '+p.q,pr,p.why);});
+// ===== 6 Energy Types =====
+const S6=SECS[5];
+const edef=[['Kinetic','Energy of motion'],['Gravitational PE','Stored because of height'],['Elastic PE','Stored when stretched or squeezed'],['Chemical PE','Stored in the bonds of molecules'],['Thermal','Energy that raises temperature (heat)']];
+placeMatch(S6,'Match each type of energy to its description.',edef,'Kinetic = motion. Gravitational PE = height. Elastic PE = stretched or squeezed. Chemical PE = bonds. Thermal = heat.',true);
+const es=[['A sprinter running fast.','Kinetic'],['A skater at the top of a ramp.','Gravitational PE'],['A stretched rubber band.','Elastic PE'],["Gasoline in a car's tank.",'Chemical PE'],['Brake pads rubbing and heating up.','Thermal'],["A kangaroo's stretched tendon.",'Elastic PE'],['A rolling bowling ball.','Kinetic'],['An apple on a high branch.','Gravitational PE']];
+placeMatch(S6,'Which type of energy is in each scene? Drag a type onto each scene.',es.map(r=>[r[1],r[0]]),'Look for the key clue: moving, high up, stretched, stored in fuel or food, or heating up.',true);
+const ml=[['Same ball, but it moves faster. Its kinetic energy is:',0],['Same speed, but a heavier ball. Its kinetic energy is:',0],['Same skater, higher on the ramp. Gravitational PE is:',0],["A 25 kg child and a 75 kg man at the same height. The child's gravitational PE is:",1],['Skater halfway down the ramp compared to the top. Gravitational PE is:',1],['Skater halfway down the ramp compared to the top. Kinetic energy is:',0]];
+multi(S6,'Choose MORE, LESS or SAME for each.',ml.map(r=>({type:'select',text:r[0],options:['MORE','LESS','SAME'],answer:r[1]})),'Kinetic energy grows with speed and with mass. Gravitational PE grows with height and with weight. Going down a ramp, PE becomes KE.');
+// ===== 7 Energy Transfer =====
+const S7=SECS[6];
+const TR=[{t:'You pull back a rubber band.',g:3,r:[2]},{t:'A car drives down the road.',g:3,r:[0,4]},{t:'A skater rolls down a ramp (with friction).',g:1,r:[0,4]},{t:'A latch lets a stretched spring go.',g:2,r:[0]}];
+TR.forEach(r=>multi(S7,'Energy transfer: '+r.t,[{type:'select',text:'Who is the GIVER (energy type that decreases)?',options:ENERGY,answer:r.g},{type:'check',text:'Who are the RECEIVERS? (Choose all that apply.)',options:ENERGY,answer:r.r}],'The giver loses the energy the receivers gain. The total stays the same (conservation of energy). Friction always makes some thermal energy.'));
+const bscen='The skater starts at the top of the ramp with 10 units of energy, all gravitational PE.';
+add(S7,'bars',{prompt:'Build the bar chart: the skater is HALFWAY down the ramp, NO friction.',note:bscen,sol:[5,5,0],rules:[{label:'Total energy is 10',f:(v,t)=>t===10,exp:'10'},{label:'Gravitational PE is 5 (half the height)',f:v=>v[0]===5,exp:'PE 5'},{label:'Kinetic energy is 5',f:v=>v[1]===5,exp:'KE 5'},{label:'Thermal is 0 (no friction)',f:v=>v[2]===0,exp:'Thermal 0'}],why:'Half the height means half the PE (5). With no friction, the other 5 became kinetic energy and none became thermal.'});
+add(S7,'bars',{prompt:'Build the bar chart: the skater is at the BOTTOM of the ramp, NO friction.',note:bscen,sol:[0,10,0],rules:[{label:'Total energy is 10',f:(v,t)=>t===10,exp:'10'},{label:'Gravitational PE is 0',f:v=>v[0]===0,exp:'PE 0'},{label:'All 10 is kinetic energy',f:v=>v[1]===10,exp:'KE 10'}],why:'At the bottom there is no height left, so all 10 units of PE became kinetic energy.'});
+add(S7,'bars',{prompt:'Build the bar chart: the skater is HALFWAY down the ramp, WITH friction.',note:bscen,sol:[5,4,1],rules:[{label:'Total energy is 10',f:(v,t)=>t===10,exp:'10'},{label:'Gravitational PE is 5 (half the height)',f:v=>v[0]===5,exp:'PE 5'},{label:'Thermal is more than 0 (friction)',f:v=>v[2]>0,exp:'Thermal above 0'},{label:'Kinetic energy is more than 0',f:v=>v[1]>0,exp:'KE above 0'}],why:'The PE is still 5. Friction turns some energy into thermal, so the kinetic energy is less than 5, but the total is still 10. One example answer: PE 5, KE 4, thermal 1.'});
+add(S7,'bars',{prompt:'Build the bar chart: the skater is at the BOTTOM of the ramp, WITH friction.',note:bscen,sol:[0,7,3],rules:[{label:'Total energy is 10',f:(v,t)=>t===10,exp:'10'},{label:'Gravitational PE is 0',f:v=>v[0]===0,exp:'PE 0'},{label:'Thermal is more than 0 (friction)',f:v=>v[2]>0,exp:'Thermal above 0'},{label:'Kinetic energy is more than 0 and less than 10',f:v=>v[1]>0&&v[1]<10,exp:'KE between 1 and 9'}],why:'No height left, so PE is 0. Friction made some thermal energy, so kinetic is less than 10. One example answer: KE 7, thermal 3.'});
+const CH={A:[10,0,0],B:[5,4,1],C:[0,7,3],D:[0,10,0],E:[0,4,1]};
+function chartsFig(){const svg=sv('svg',{viewBox:'0 0 1000 250',role:'img'});
+ Object.keys(CH).forEach((k,i)=>{const x=20+i*196,base=190,u=15;svg.append(sv('rect',{x,y:10,width:176,height:210,fill:'#fff',stroke:'#C9D3DD'}));
+  ['#2F6DB5','#2E8B57','#C0392B'].forEach((c,j)=>{const hh=CH[k][j]*u;if(hh>0)svg.append(sv('rect',{x:x+14+j*50,y:base-hh,width:42,height:hh,fill:c,stroke:'#1A2F44'}));});
+  svg.append(sv('line',{x1:x+6,x2:x+170,y1:base,y2:base,stroke:'#1A2F44','stroke-width':2}));svg.append(sv('text',{x:x+88,y:212,'text-anchor':'middle','font-size':20,'font-weight':'bold',fill:'#1A2F44'},k));});
+ const wrap=h('div');wrap.append(svg,h('div',{class:'hint',text:'Blue = gravitational PE, green = kinetic energy, red = thermal energy. The skater starts with 10 units of PE at the top.'}));return wrap;}
+multi(S7,'Look at the five energy bar charts, then answer each question.',[['Skater halfway down the ramp, WITH friction:',1],['Skater at the bottom of the ramp, WITH friction:',2],['Skater at the bottom of the ramp, NO friction:',3],['Skater at the top of the ramp:',0],['Which chart is IMPOSSIBLE? (Energy got lost.)',4]].map(r=>({type:'select',text:r[0],options:['A','B','C','D','E'],answer:r[1]})),'Every possible chart adds up to 10. Chart E adds to only 5, so energy disappeared, which breaks conservation of energy.',chartsFig);
+mc(S7,'A rolling ball slows down and stops because of friction. Where did its kinetic energy go?',['It became thermal energy (heat)','It disappeared','It became more kinetic energy','It became mass'],0,'Energy is not used up. Friction transfers the kinetic energy into thermal energy.');
+mc(S7,'Conservation of energy means…',['Energy changes form, but the total stays the same','Energy gets used up','Energy can be created from nothing','Moving objects have no energy'],0,'Energy transfers and transforms. It is not created or destroyed.');
+mc(S7,'Acceleration is…',['how fast an object’s speed changes','how fast an object moves','how far an object travels','how heavy an object is'],0,'Acceleration = change in speed ÷ time. A steady speed is acceleration of 0.');
+// ===== 8 Boss =====
+const S8=SECS[7];
+const BOSS={obj:'box',objLabel:'Cart',palette:['Gravity','Normal','Applied','Friction','Tension'],exp:{D:'Gravity',U:'Normal',R:'Applied'},lens:{Gravity:3,Normal:3,Applied:1},rel:[['eq','Gravity','Normal'],['gt','Gravity','Applied']],why:'The cart weighs 150 N, so Gravity = Normal = 150 N (balanced up and down). The 30 N Applied arrow is much shorter than 150 N. Friction is ignored.'};
+add(S8,'fbd',Object.assign({prompt:'Boss 1. You push a full 15 kg cart with a steady 30 N push. Ignore friction. Its weight is 150 N. Build the FBD for the cart. Remember that arrow length shows the size of the force.'},BOSS));
+multi(S8,'Boss 2. Same cart (15 kg, 30 N push, no friction). Answer each part.',[{type:'select',text:'Balanced or unbalanced?',options:['Balanced','Unbalanced'],answer:1},{type:'num',text:'Net force on the cart (in N):',answer:30},{type:'num',text:'Acceleration of the full 15 kg cart (in m/s²):',answer:2},{type:'num',text:'Same push on the EMPTY 5 kg cart. Acceleration (in m/s²):',answer:6}],'Unbalanced: 30 N right with nothing opposing it. Full cart: a = 30 ÷ 15 = 2 m/s². Empty cart: a = 30 ÷ 5 = 6 m/s².');
+mc(S8,"Boss 3. Newton's 3rd law: your hands push the cart forward. What is the reaction force?",['The cart pushes back on your hands','Friction pushes the cart backward','Gravity pulls the cart down','The cart pushes forward on itself'],0,'The reaction is the cart pushing back on your hands: equal in size, opposite in direction, on a different object.');
+multi(S8,'Boss 4. You push the cart and it speeds up. Describe the energy transfer.',[{type:'select',text:'Who is the GIVER?',options:ENERGY,answer:3},{type:'check',text:'Who are the RECEIVERS? (Choose all that apply.)',options:ENERGY,answer:[0,4]}],'Chemical PE in your body is the giver. The receivers are the kinetic energy of the moving cart and thermal energy (heat).');
+mc(S8,"Boss 5. Which cart speeds up faster with the same push, and why? Choose the best claim, evidence and reasoning.",['The full cart, because it has more mass.','The empty cart: a = 30 ÷ 5 = 6 m/s² but a = 30 ÷ 15 = 2 m/s² for the full cart. With the same force, less mass means more acceleration (Newton’s 2nd law).','Both speed up the same, because the push is the same.','The empty cart, because it has less friction.'],1,'A good CER has a claim (the empty cart), evidence (6 m/s² vs 2 m/s²) and reasoning (a = F ÷ m: same force, less mass, more acceleration).');
+const APP=document.getElementById('app');
+function order(){return S.queue||Q.map((_,i)=>i);}
+function ans(q){return S.ans[q.id]=S.ans[q.id]||{};}
+function isAnswered(q){return T[q.type].answered(q,S.ans[q.id]||{});}
+function gradeQ(q){const parts=T[q.type].grade(q,S.ans[q.id]||{});return{q,parts,earned:parts.filter(p=>p.ok).length,max:parts.length};}
+function gradeAll(){return Q.map(gradeQ);}
+function topBar(){const ord=order(),done=ord.filter(i=>isAnswered(Q[i])).length;
+  const t=h('div',{class:'top'});const row=h('div',{class:'row'});
+  row.append(h('div',{class:'sec',id:'secname'}),h('div',{class:'cnt',id:'cnt'}));t.append(row,h('div',{class:'bar'},h('i',{id:'barfill'})));return t;}
+function updTop(){const ord=order(),done=ord.filter(i=>isAnswered(Q[i])).length,f=document.getElementById('barfill');
+  if(f)f.style.width=(100*done/ord.length)+'%';const c=document.getElementById('cnt');
+  if(c)c.textContent=(S.phase==='quiz'?'Question '+(S.i+1)+' of '+ord.length+'  |  ':'')+done+' answered';}
+function go(phase,i){S.phase=phase;if(i!=null)S.i=i;save();draw();window.scrollTo(0,0);}
+function draw(){APP.innerHTML='';SEL=null;
+  if(S.phase==='start')return drawStart();
+  APP.append(topBar());
+  if(S.phase==='quiz')drawQ();else if(S.phase==='submit')drawSubmit();else drawResults();
+  updTop();}
+function drawStart(){
+  const savedName=S.name,hadWork=Object.keys(S.ans).length>0;
+  const c=h('div',{class:'card'});
+  c.append(h('h1',{text:'A14. Review: Forces, Motion and Energy'}),
+   h('p',{text:'This is a review of everything we have done in class on forces, Newton\'s laws, calculations and energy. Work alone and in order. Answer every question, then submit to see your score and every question you missed, with the right answers.'}),
+   h('ul',{},h('li',{text:'Drag pieces onto dashed boxes. You can also tap a piece, then tap the box.'}),h('li',{text:'You can go back and change an answer any time before you submit.'}),h('li',{text:'After you submit you can redo the questions you missed to raise your score.'})));
+  const nm=h('input',{type:'text',placeholder:'Your first and last name',value:S.name||'',style:'width:100%;max-width:380px;margin-top:6px',autocomplete:'off'});
+  nm.addEventListener('input',()=>{S.name=nm.value;save();});
+  c.append(h('div',{style:'margin-top:12px;font-weight:bold',text:'Your name:'}),nm);
+  if(hadWork)c.append(h('div',{class:'hint',text:'Using a shared computer? Type YOUR name, and a new review starts. Your classmate\'s saved work is replaced.'}));
+  const any=Object.keys(S.ans).length>0;
+  const b=h('div',{class:'nav'});
+  b.append(h('button',{class:'btn amb',text:any?'Continue (saved work for '+(savedName||'this name')+')':'Start',onclick:()=>{if(!S.name.trim()){nm.focus();nm.style.borderColor='#B3261E';return;}if(hadWork&&S.name.trim().toLowerCase()!==(savedName||'').trim().toLowerCase()){const n=S.name;S={name:n,ans:{},seed:Math.floor(Math.random()*1e9),i:0,phase:'start',first:null,queue:null,retried:false};}go(S.phase==='start'?'quiz':S.phase,S.i);}}));
+  if(any)b.append(h('button',{class:'btn alt',text:'Start over',onclick:()=>{if(confirm('Erase your answers and start over?')){const n=S.name;S={name:n,ans:{},seed:Math.floor(Math.random()*1e9),i:0,phase:'start',first:null,queue:null,retried:false};save();draw();}}}));
+  c.append(b);
+  const sc=h('div',{class:'hint',style:'margin-top:14px',text:Q.length+' questions in '+SECS.length+' sections: '+SECS.join(', ')+'.'});c.append(sc);
+  APP.append(h('div',{class:'card',style:'margin-top:24px;background:var(--pale)'},h('b',{text:'Mr. Norwitt\'s 8th grade science'})),c);}
+function drawQ(){const ord=order();const q=Q[ord[S.i]];const a=ans(q);
+  document.getElementById('secname').textContent=q.sec;
+  const card=h('div',{class:'card'});card.append(h('p',{class:'q',html:q.prompt}));const box=h('div',{});card.append(box);APP.append(card);
+  const api={save,redo(soft){if(soft){updTop();return;}box.innerHTML='';T[q.type].render(q,box,a,api);updTop();}};
+  T[q.type].render(q,box,a,api);
+  const nav=h('div',{class:'nav'});
+  nav.append(h('button',{class:'btn alt',text:'← Back',disabled:S.i===0,onclick:()=>go('quiz',S.i-1)}),
+   h('button',{class:'btn',text:S.i===ord.length-1?'Review and submit →':'Next →',onclick:()=>S.i===ord.length-1?go('submit'):go('quiz',S.i+1)}));
+  APP.append(nav);}
+function drawSubmit(){const ord=order();const un=ord.filter(i=>!isAnswered(Q[i]));
+  document.getElementById('secname').textContent='Ready to submit?';
+  const c=h('div',{class:'card'});c.append(h('h2',{text:un.length?un.length+' question'+(un.length>1?'s':'')+' not answered yet':'You answered every question'}));
+  c.append(h('p',{text:un.length?'Tap a number to go back to it. Unanswered questions count as missed.':'Tap a number if you want to check any answer. When you are ready, submit.'}));
+  const g=h('div',{class:'qgrid'});ord.forEach((qi,k)=>g.append(h('button',{class:isAnswered(Q[qi])?'done':'',title:Q[qi].sec,text:String(k+1),onclick:()=>go('quiz',k)})));
+  c.append(g);
+  c.append(h('div',{class:'nav'},h('button',{class:'btn alt',text:'← Back to questions',onclick:()=>go('quiz',ord.length-1)}),h('button',{class:'btn amb',text:'Submit and see my score',onclick:()=>{const r=gradeAll();if(!S.first)S.first={earned:r.reduce((s,x)=>s+x.earned,0),max:r.reduce((s,x)=>s+x.max,0)};go('results');}})));
+  APP.append(c);}
+let SHOW_ALL=false;
+function drawResults(){const r=gradeAll();const sub=S.queue?r.filter(x=>S.queue.includes(x.q.n)):r;
+  const E=r.reduce((s,x)=>s+x.earned,0),M=r.reduce((s,x)=>s+x.max,0),pct=Math.round(100*E/M);
+  document.getElementById('secname').textContent='Your results';
+  const c=h('div',{class:'card'});
+  c.append(h('div',{class:'hint',text:(S.name||'')+'  |  '+new Date().toLocaleDateString()}));
+  c.append(h('div',{class:'score',text:E+' / '+M+'  ('+pct+'%)'}));
+  if(S.first&&S.retried)c.append(h('div',{html:'First try: <b>'+S.first.earned+' / '+S.first.max+' ('+Math.round(100*S.first.earned/S.first.max)+'%)</b>. After redoing missed questions: <b>'+E+' / '+M+'</b>.'}));
+  c.append(h('div',{class:'hint',text:'Points are earned for each correct part of a question. Take a screenshot of this screen if your teacher asks for your score.'}));
+  APP.append(c);
+  const sc=h('div',{class:'card'});sc.append(h('h2',{text:'By section'}));
+  SECS.forEach(s=>{const rs=r.filter(x=>x.q.sec===s),e=rs.reduce((a,x)=>a+x.earned,0),m=rs.reduce((a,x)=>a+x.max,0),p=Math.round(100*e/m);
+    const row=h('div',{class:'secrow'},h('div',{class:'nm',text:s}),h('div',{class:'bar'},h('i',{style:`width:${p}%;background:${p>=85?'#1B6B2F':p>=60?'#EF9D2D':'#B3261E'}`})),h('div',{text:e+' / '+m+'  ('+p+'%)',style:'flex:0 0 130px;text-align:right'}));sc.append(row);});
+  const weak=SECS.filter(s=>{const rs=r.filter(x=>x.q.sec===s);return rs.reduce((a,x)=>a+x.earned,0)/rs.reduce((a,x)=>a+x.max,0)<0.85;});
+  sc.append(h('p',{style:'font-weight:bold;margin-top:12px',text:weak.length?'Study these before the formative: '+weak.join(', ')+'.':'Strong across all sections. Nice work.'}));
+  APP.append(sc);
+  const missed=r.filter(x=>x.earned<x.max);
+  const rc=h('div',{class:'card'});rc.append(h('h2',{text:missed.length?'Questions to review ('+missed.length+')':'No missed questions'}));
+  const ctl=h('div',{class:'nav',style:'margin:0 0 6px'});
+  if(missed.length){ctl.append(h('button',{class:'btn amb',text:'Redo the questions I missed',onclick:()=>{S.queue=missed.map(x=>x.q.n);S.retried=true;missed.forEach(x=>delete S.ans[x.q.id]);go('quiz',0);}}));}
+  ctl.append(h('button',{class:'btn alt',text:SHOW_ALL?'Show only missed':'Show all questions',onclick:()=>{SHOW_ALL=!SHOW_ALL;draw();}}));
+  ctl.append(h('button',{class:'btn alt',text:'Start over',onclick:()=>{if(confirm('Erase everything and start over?')){const n=S.name;S={name:n,ans:{},seed:Math.floor(Math.random()*1e9),i:0,phase:'start',first:null,queue:null,retried:false};save();SHOW_ALL=false;draw();}}}));
+  rc.append(ctl);APP.append(rc);
+  (SHOW_ALL?r:missed).forEach(x=>{const q=x.q,a=S.ans[q.id]||{};const k=h('div',{class:'card'});
+    k.append(h('div',{class:'hint',html:'<b>'+q.sec+'</b>  |  <span class="pill '+(x.earned===x.max?'ok':'no')+'">'+x.earned+' / '+x.max+'</span>'}),h('p',{class:'q',html:q.prompt}));
+    if(q.type==='fbd'||q.type==='net'||q.type==='bars')k.append(T[q.type].review(q,a));
+    else if(q.fig)k.append(typeof q.fig==='function'?q.fig():q.fig);
+    x.parts.forEach(p=>{k.append(h('div',{class:'part '+(p.ok?'ok':'no')},h('b',{text:(p.ok?'✓ ':'✗ ')+p.label}),p.ok?h('span',{text:'You: '+p.got}):h('span',{html:'You: '+esc(p.got)+'<br>Correct: <b>'+esc(p.exp)+'</b>'})));});
+    if(q.why)k.append(h('div',{class:'why',html:'<b>Why:</b> '+q.why}));APP.append(k);});
+}
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+load();if(S.phase==='results'&&!S.first)S.phase='submit';draw();
+window.A14={Q,S:()=>S,T,gradeAll,gradeQ,go,draw,setAns:(id,v)=>{S.ans[id]=v;save();}};
+</script></body></html>
