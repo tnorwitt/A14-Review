@@ -382,17 +382,24 @@ function ans(q){return S.ans[q.id]=S.ans[q.id]||{};}
 function isAnswered(q){return !!(S.ans[q.id]&&S.ans[q.id].checked);}
 function gradeQ(q){const parts=T[q.type].grade(q,S.ans[q.id]||{});return{q,parts,earned:parts.filter(p=>p.ok).length,max:parts.length};}
 function gradeAll(){return Q.map(gradeQ);}
+let NAV=false;
+function navPanel(){const ord=order();const c=h('div',{class:'card'});c.append(h('h2',{text:'Jump to a section or question'}),h('div',{class:'hint',text:'Green = checked. White = not checked yet. Dark outline = where you are.'}));
+  SECS.forEach(sec=>{const idx=ord.map((qi,k)=>[qi,k]).filter(p=>Q[p[0]].sec===sec);if(!idx.length)return;const done=idx.filter(p=>isAnswered(Q[p[0]])).length;
+    const row=h('div',{style:'margin-top:10px'});row.append(h('b',{text:sec+'  ('+done+' / '+idx.length+' checked)'}));
+    const g=h('div',{class:'qgrid'});idx.forEach(p=>g.append(h('button',{class:(isAnswered(Q[p[0]])?'done ':'')+((S.phase==='quiz'&&p[1]===S.i)?'cur':''),text:String(p[1]+1),onclick:()=>{NAV=false;go('quiz',p[1]);}})));row.append(g);c.append(row);});
+  c.append(h('div',{class:'nav'},h('button',{class:'btn alt',text:'Close',onclick:()=>{NAV=false;draw();}}),h('button',{class:'btn alt',text:'Finish and see my score',onclick:()=>{NAV=false;go('submit');}})));return c;}
 function topBar(){const ord=order(),done=ord.filter(i=>isAnswered(Q[i])).length;
   const t=h('div',{class:'top'});const row=h('div',{class:'row'});
-  row.append(h('div',{class:'sec',id:'secname'}),h('div',{class:'cnt',id:'cnt'}),h('button',{class:'home',text:'Start page',onclick:()=>{S.resume=S.phase;S.phase='start';save();draw();window.scrollTo(0,0);}}));t.append(row,h('div',{class:'bar'},h('i',{id:'barfill'})));return t;}
+  row.append(h('div',{class:'sec',id:'secname'}),h('div',{class:'cnt',id:'cnt'}),S.phase==='results'?null:h('button',{class:'home',text:'Sections',onclick:()=>{NAV=!NAV;draw();}}),h('button',{class:'home',text:'Start page',onclick:()=>{NAV=false;S.resume=S.phase;S.phase='start';save();draw();window.scrollTo(0,0);}}));t.append(row,h('div',{class:'bar'},h('i',{id:'barfill'})));return t;}
 function updTop(){const ord=order(),done=ord.filter(i=>isAnswered(Q[i])).length,f=document.getElementById('barfill');
   if(f)f.style.width=(100*done/ord.length)+'%';const c=document.getElementById('cnt');
   if(c){const g=ord.map(i=>Q[i]).filter(isAnswered).map(gradeQ),e=g.reduce((a,x)=>a+x.earned,0),m=g.reduce((a,x)=>a+x.max,0);
     c.textContent=(S.phase==='quiz'?'Question '+(S.i+1)+' of '+ord.length+'  |  ':'')+done+' checked'+(m?'  |  Score so far: '+e+' / '+m:'');}}
-function go(phase,i){S.phase=phase;if(i!=null)S.i=i;save();draw();window.scrollTo(0,0);}
+function go(phase,i){NAV=false;S.phase=phase;if(i!=null)S.i=i;save();draw();window.scrollTo(0,0);}
 function draw(){APP.innerHTML='';SEL=null;
   if(S.phase==='start')return drawStart();
   APP.append(topBar());
+  if(NAV&&(S.phase==='quiz'||S.phase==='submit'))APP.append(navPanel());
   if(S.phase==='quiz')drawQ();else if(S.phase==='submit')drawSubmit();else drawResults();
   updTop();}
 function resetAll(){const n=S.name;S={name:n,ans:{},seed:Math.floor(Math.random()*1e9),i:0,phase:'start',first:null,queue:null,retried:false,resume:null};save();SHOW_ALL=false;draw();window.scrollTo(0,0);}
@@ -433,11 +440,12 @@ function drawQ(){const ord=order();const q=Q[ord[S.i]];const a=ans(q);
   const upd=()=>{chk.disabled=!T[q.type].answered(q,a);};
   const api={save,redo(soft){if(!soft){box.innerHTML='';T[q.type].render(q,box,a,api);}upd();updTop();}};
   T[q.type].render(q,box,a,api);upd();
-  nav.append(back,chk);}
+  const skip=h('button',{class:'btn alt',text:S.i===ord.length-1?'Skip and finish':'Skip →',onclick:()=>S.i===ord.length-1?go('submit'):go('quiz',S.i+1)});
+  nav.append(back,h('div',{style:'display:flex;gap:10px;flex-wrap:wrap'},skip,chk));}
 function drawSubmit(){const ord=order();const un=ord.filter(i=>!isAnswered(Q[i]));
   document.getElementById('secname').textContent='Ready to submit?';
   const c=h('div',{class:'card'});c.append(h('h2',{text:un.length?un.length+' question'+(un.length>1?'s':'')+' not checked yet':'You checked every question'}));
-  c.append(h('p',{text:un.length?'Tap a number to go back to it. Questions you have not checked count as missed.':'Tap a number to look back at any question. When you are ready, see your score.'}));
+  c.append(h('p',{text:un.length?'Tap a number to go back to it. Skipped questions count as missed until you go back and check them.':'Tap a number to look back at any question. When you are ready, see your score.'}));
   const g=h('div',{class:'qgrid'});ord.forEach((qi,k)=>g.append(h('button',{class:isAnswered(Q[qi])?'done':'',title:Q[qi].sec,text:String(k+1),onclick:()=>go('quiz',k)})));
   c.append(g);
   c.append(h('div',{class:'nav'},h('button',{class:'btn alt',text:'← Back to questions',onclick:()=>go('quiz',ord.length-1)}),h('button',{class:'btn amb',text:'Submit and see my score',onclick:()=>{const r=gradeAll();if(!S.first)S.first={earned:r.reduce((s,x)=>s+x.earned,0),max:r.reduce((s,x)=>s+x.max,0)};go('results');}})));
